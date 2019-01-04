@@ -2,9 +2,13 @@
 <!DOCTYPE language SYSTEM "language.dtd"
 [
 	<!ENTITY simpleName "([a-z][a-z\d]*:)?[a-z][a-z\d]*">
-	<!ENTITY name       "([a-zA-Z_\$]([\w\$\-\.]*[\w\$])?:)?[a-zA-Z_\$]([\w\$\-\.]*[\w\$])?">
-	<!ENTITY simpleTag  "&lt;\s*&simpleName;">
-	<!ENTITY tag        "&lt;\s*&name;">
+	<!ENTITY baseName   "([a-zA-Z_\$]|[^[:ascii:]])(([\w\$\-\.]|[^[:ascii:]])*([\w\$]|[^[:ascii:]]))?">
+	<!ENTITY name       "(&baseName;:)?&baseName;">
+	<!ENTITY baseNameWithBound "(\b[a-zA-Z_\$]|[^[:ascii:]])(([\w\$\-\.]|[^[:ascii:]])*([\w\$]|[^[:ascii:]]))?">
+	<!ENTITY nameWithBound     "(&baseNameWithBound;:)?&baseNameWithBound;"> <!-- Use this instead of "\b&name;" -->
+
+	<!ENTITY simpleTag  "&lt;\s*&simpleName;"> <!-- Element tag -->
+	<!ENTITY tag        "&lt;\s*(&name;|&gt;)">
 	<!ENTITY entref     "&amp;([a-zA-Z\d]+|#\d+|#x[a-fA-F\d]+);">
 ]>
 
@@ -34,6 +38,9 @@
     available at: https://github.com/Microsoft/TypeScript-TmLanguage
 
     Change log:
+     * v4 [2018-12-30]: Allow type assertion in the tag name.
+                        Allow tags after the keywords "await" & "yield".
+                        Allow empty tags and non-ASCII tag name & attributes.
      * v3 [2018-11-18]: Fix Doxygen comments & shebang. Use script to
                         generate XML files for JavaScript and TypeScript.
      * v2 [2018-08-18]: Remove "Conditional Expression" context.
@@ -85,19 +92,23 @@
 
 		<!-- ReactJS -->
 
+		<!-- Tags highlighting -->
 		<context name="React" attribute="Normal Text" lineEndContext="#stay">
-			<!-- Tags highlighting -->
 			<!-- Tag in new line -->
 			<RegExpr context="ValidTag" attribute="Normal Text" String="&tag;" firstNonSpace="true" lookAhead="true" />
 			<!-- Highlight tags only after some keywords -->
-			<RegExpr context="ValidTag" attribute="ControlFlow" String="\b(return)\s*(?=&tag;|/\*)" />
+			<RegExpr context="ValidTag" attribute="ControlFlow" String="\b(return|await)\s*(?=&tag;|/\*)" />
 			<RegExpr context="ValidTag" attribute="Module" String="\b(default)\s*(?=&tag;|/\*)" />
+			<RegExpr context="ValidTag" attribute="Reserved" String="\b(yield)\s*(?=&tag;|/\*)" />
 
 			<!-- Characters before a valid tag -->
-			<RegExpr context="ValidTag" attribute="Symbol" String="([,\=&gt;:\*\?]|&amp;&amp;|\|\|)\s*(?=&tag;|/\*)" />
-			<RegExpr context="ValidTag" attribute="Normal Text" String="[\(\[]\s*(?=&tag;|/\*)" />
+			<RegExpr context="ValidTag" attribute="Special Operators" String="\=&gt;\s*(?=&tag;|/\*)" />
+			<RegExpr context="ValidTag" attribute="Symbol" String="([\[,\=&gt;\*\?]|&amp;&amp;|\|\|)\s*(?=&tag;|/\*)" />
+			<RegExpr context="ValidTag" attribute="Normal Text" String="\(\s*(?=&tag;|/\*)" />
 			<!-- The "Object-BeforeTag" context looks for a valid Tag and then sends the "Object" context -->
 			<RegExpr context="Object-BeforeTag" attribute="Symbol" String="\{\s*(?=&tag;|/\*)" beginRegion="Brace" />
+
+			<RegExpr context="ValidTag" attribute="Symbol" String="&lt;\s*&gt;\s*(?=&tag;|/\*)" />
 
 			<!-- Tag after a comment on a new line -->
 			<Detect2Chars context="ValidTag" attribute="Comment" char="/" char1="*" firstNonSpace="true" lookAhead="true" />
@@ -106,14 +117,7 @@
 			<IncludeRules context="Overwrite{{{NAME}}}" />
 		</context>
 
-		<!-- NOTE: The highlighting of Tags after a multiline comment does not work with: lineEndContext="#pop" -->
-		<context name="ValidTag" attribute="Normal Text" lineEndContext="#stay" fallthrough="true" fallthroughContext="#pop">
-			<RegExpr context="#stay" attribute="Normal Text" String="\s+(?=&lt;|/\*)" />
-			<IncludeRules context="FindTags" />
-			<!-- Doxygen & Multi-line comments! -->
-			<Detect2Chars context="#pop" attribute="Comment" char="/" char1="/" lookAhead="true" />
-			<IncludeRules context="AllComments" />
-		</context>
+		<!-- Detect tags before starting a context -->
 		<context name="Object-BeforeTag" attribute="Normal Text" lineEndContext="#stay" fallthrough="true" fallthroughContext="#pop!Object">
 			<IncludeRules context="ValidTag" />
 		</context>
@@ -121,14 +125,38 @@
 			<IncludeRules context="ValidTag" />
 		</context>
 
+		<!-- TAGS:
+		     NOTE & TODO: The following code is common for 'javascript-react.xml' and 'typescript-react.xml'
+		     and is replicated in both files. Look for some way to avoid having repeated code, for example,
+		     with a common XML file or with a generator script. The only drawback is that the
+		     "EvaluatedCode" context includes "Normal". -->
+
+		<!-- Highlight nested tags with comments in between.
+		     NOTE: The highlighting of Tags after a multiline comment does not work with: lineEndContext="#pop" -->
+		<context name="ValidTag" attribute="Normal Text" lineEndContext="#stay" fallthrough="true" fallthroughContext="#pop">
+			<RegExpr context="#stay" attribute="Normal Text" String="\s+(?=&lt;|/\*)" />
+			<IncludeRules context="FindTags" />
+			<!-- Doxygen & Multi-line comments! -->
+			<Detect2Chars context="#pop" attribute="Comment" char="/" char1="/" lookAhead="true" />
+			<IncludeRules context="AllComments" />
+		</context>
+
+		<!-- Start tag -->
 		<context name="FindTags" attribute="Normal Text" lineEndContext="#stay">
+			<!-- Empty tag (element) -->
+			<RegExpr context="ElementTagContent" attribute="Element Tag" String="&lt;\s*&gt;" beginRegion="Element" />
+			<!-- Detect non-ASCII character in the tag name (component). This prevents highlighting as Element,
+			     tag names that don't start with a non-ASCII character. -->
+			<RegExpr context="ComponentTagNonASCII" attribute="Component Tag" String="&lt;\s*(?=([a-z][a-z\d]*:)?([a-z][a-z\d]*)?[^[:ascii:]])" beginRegion="ComponentElement" /> <!-- &simpleName; -->
+			<!-- Element & component tags -->
 			<RegExpr context="ElementTag" attribute="Element Tag" String="&simpleTag;(?=[^\w\$\-\.:]|$|[\-\.]+([^\w\$\-\.]|$)|:([^a-zA-Z_\$]|$))" beginRegion="Element" />
-			<RegExpr context="ComponentTag" attribute="Component Tag" String="&tag;" beginRegion="ComponentElement" />
+			<RegExpr context="ComponentTagFindType" attribute="Component Tag" String="&tag;" beginRegion="ComponentElement" />
 		</context>
 		<context name="FindEntityRefs" attribute="Normal Text" lineEndContext="#stay">
 			<RegExpr context="#stay" attribute="EntityRef" String="&entref;" />
 		</context>
 
+		<!-- Inside the tag -->
 		<context name="ElementTag" attribute="Normal Text" lineEndContext="#stay">
 			<Detect2Chars context="#pop" attribute="Element Tag" char="/" char1="&gt;" endRegion="Element" />
 			<DetectChar context="#pop!ElementTagContent" attribute="Element Tag" char="&gt;" />
@@ -139,27 +167,67 @@
 			<DetectChar context="#pop!ComponentTagContent" attribute="Component Tag" char="&gt;" />
 			<IncludeRules context="DefaultTag" />
 		</context>
+		<!-- Type after the tag name. Ex: <C<number> /> -->
+		<context name="ComponentTagFindType" attribute="Normal Text" lineEndContext="#pop!ComponentTag" fallthrough="true" fallthroughContext="#pop!ComponentTag">
+			<DetectChar context="#pop!TypeInsideTag" attribute="Symbol" char="&lt;" />
+		</context>
+		<!-- Highlight tag name with non-ASCII characters -->
+		<context name="ComponentTagNonASCII" attribute="Normal Text" lineEndContext="#pop!ComponentTag" fallthrough="true" fallthroughContext="#pop!ComponentTag">
+			<RegExpr context="#pop!ComponentTagFindType" attribute="Component Tag" String="&name;" />
+		</context>
 		<context name="DefaultTag" attribute="Normal Text" lineEndContext="#stay">
-			<RegExpr context="Attribute" attribute="Attribute" String="\b&name;" />
+			<RegExpr context="Attribute" attribute="Attribute" String="&nameWithBound;" />
+			<IncludeRules context="FindEvaluatedCode" />
 			<IncludeRules context="AllComments" />
 			<RegExpr context="#stay" attribute="Error" String="\S+&name;" />
 			<RegExpr context="#stay" attribute="Error" String="\S" />
 		</context>
 
+		<!-- Type assertion after the tag name -->
+		<context name="TypeInsideTag" attribute="Component Tag" lineEndContext="#stay">
+			<DetectChar context="#pop!ComponentTag" attribute="Symbol" char="&gt;" />
+			<IncludeRules context="DefaultTypeInsideTag" />
+		</context>
+		<context name="DefaultTypeInsideTag" attribute="Component Tag" lineEndContext="#stay">
+			<DetectChar context="TypeInsideTag-AngleBracket" attribute="Symbol" char="&lt;" />
+			<DetectChar context="TypeInsideTag-CurlyBracket" attribute="Symbol" char="{" />
+			<DetectChar context="TypeInsideTag-SquareBracket" attribute="Symbol" char="[" />
+			<DetectChar context="TypeInsideTag-RoundBracket" attribute="Symbol" char="(" />
+			<IncludeRules context="AllComments" />
+		</context>
+		<context name="TypeInsideTag-AngleBracket" attribute="Component Tag" lineEndContext="#stay">
+			<DetectChar context="#pop" attribute="Symbol" char="&gt;" />
+			<IncludeRules context="DefaultTypeInsideTag" />
+		</context>
+		<context name="TypeInsideTag-CurlyBracket" attribute="Component Tag" lineEndContext="#stay">
+			<DetectChar context="#pop" attribute="Symbol" char="}" />
+			<IncludeRules context="DefaultTypeInsideTag" />
+		</context>
+		<context name="TypeInsideTag-SquareBracket" attribute="Component Tag" lineEndContext="#stay">
+			<DetectChar context="#pop" attribute="Symbol" char="]" />
+			<IncludeRules context="DefaultTypeInsideTag" />
+		</context>
+		<context name="TypeInsideTag-RoundBracket" attribute="Component Tag" lineEndContext="#stay">
+			<DetectChar context="#pop" attribute="Symbol" char=")" />
+			<IncludeRules context="DefaultTypeInsideTag" />
+		</context>
+
+		<!-- Tag content: <Tag> content </Tag> -->
 		<context name="ElementTagContent" attribute="Tag Content Text" lineEndContext="#stay">
+			<RegExpr context="#pop" attribute="Element Tag" String="&lt;/\s*&gt;" endRegion="Element" />
 			<RegExpr context="ElementTagEnd" attribute="Element Tag" String="&lt;/\s*&simpleName;" />
 			<RegExpr context="ElementTagEnd" attribute="Element Tag" String="&lt;/\s*(?=[A-Z_\$])" /> <!-- Component tag (error) -->
 			<IncludeRules context="DefaultTagContent" />
 		</context>
 		<context name="ComponentTagContent" attribute="Tag Content Text" lineEndContext="#stay">
+			<RegExpr context="#pop" attribute="Component Tag" String="&lt;/\s*&gt;" endRegion="ComponentElement" />
 			<RegExpr context="ComponentTagEnd" attribute="Component Tag" String="&lt;/\s*&name;" />
 			<IncludeRules context="DefaultTagContent" />
 		</context>
 		<context name="DefaultTagContent" attribute="Tag Content Text" lineEndContext="#stay">
 			<IncludeRules context="FindTags" />
 			<IncludeRules context="FindEntityRefs" />
-			<RegExpr context="EvaluatedCode-BeforeTag" attribute="Code Brackets" String="\{\s*(?=&tag;|/\*)" beginRegion="Code" />
-			<DetectChar context="EvaluatedCode" attribute="Code Brackets" char="{" beginRegion="Code" />
+			<IncludeRules context="FindEvaluatedCode" />
 			<DetectChar context="#stay" attribute="Error" char="&lt;" />
 		</context>
 
@@ -172,12 +240,14 @@
 			<RegExpr context="#stay" attribute="Error" String="\S" />
 		</context>
 
+		<!-- Tag attribute -->
 		<context name="Attribute" attribute="Normal Text" lineEndContext="#stay">
+			<RegExpr context="#pop" attribute="Error" String="\=(?=\s*/?&gt;)" />
 			<DetectChar context="#pop!Value" attribute="Symbol" char="=" />
-			<Detect2Chars context="#pop" attribute="Normal Text" char="/" char1="&gt;" lookAhead="true" />
-			<DetectChar context="#pop" attribute="Normal Text" char="&gt;" lookAhead="true" />
+			<IncludeRules context="FindEndTag" />
+			<DetectChar context="#pop" char="{" lookAhead="true" /> <!-- EvaluatedCode -->
 			<IncludeRules context="AllComments" />
-			<RegExpr context="#stay" attribute="Attribute" String="\b&name;" />
+			<RegExpr context="#stay" attribute="Attribute" String="&nameWithBound;" />
 			<RegExpr context="#stay" attribute="Error" String="\S+&name;" />
 			<RegExpr context="#stay" attribute="Error" String="\S" />
 		</context>
@@ -185,8 +255,8 @@
 		<context name="Value" attribute="Normal Text" lineEndContext="#stay">
 			<DetectChar context="#pop!ValueDQ" attribute="Value" char="&quot;" />
 			<DetectChar context="#pop!ValueSQ" attribute="Value" char="&apos;" />
-			<RegExpr context="#pop!EvaluatedCode-BeforeTag" attribute="Code Brackets" String="\{\s*(?=&tag;|/\*)" beginRegion="Code" />
-			<DetectChar context="#pop!EvaluatedCode" attribute="Code Brackets" char="{" beginRegion="Code" />
+			<DetectChar context="#pop" char="{" lookAhead="true" /> <!-- EvaluatedCode -->
+			<IncludeRules context="FindEndTag" />
 			<IncludeRules context="AllComments" />
 			<RegExpr context="#stay" attribute="Error" String="\S" />
 		</context>
@@ -197,6 +267,16 @@
 		<context name="ValueSQ" attribute="Value" lineEndContext="#stay">
 			<DetectChar context="#pop" attribute="Value" char="&apos;" />
 			<IncludeRules context="FindEntityRefs" />
+		</context>
+
+		<context name="FindEndTag" attribute="Normal Text" lineEndContext="#stay">
+			<Detect2Chars context="#pop" char="/" char1="&gt;" lookAhead="true" />
+			<DetectChar context="#pop" char="&gt;" lookAhead="true" />
+		</context>
+
+		<context name="FindEvaluatedCode" attribute="Normal Text" lineEndContext="#stay">
+			<RegExpr context="EvaluatedCode-BeforeTag" attribute="Code Brackets" String="\{\s*(?=&tag;|/\*)" beginRegion="Code" />
+			<DetectChar context="EvaluatedCode" attribute="Code Brackets" char="{" beginRegion="Code" />
 		</context>
 		<context name="EvaluatedCode" attribute="Normal Text" lineEndContext="#stay">
 			<DetectChar context="#pop" attribute="Code Brackets" char="}" endRegion="Code" />
@@ -226,9 +306,11 @@
 		<!-- itemDatas in {{{NAME}}} XML file -->
 		<itemData name="Symbol"           defStyleNum="dsOperator" />
 		<itemData name="ControlFlow"      defStyleNum="dsControlFlow" spellChecking="false" />
+		<itemData name="Reserved"         defStyleNum="dsKeyword" italic="true" spellChecking="false" />
 		<itemData name="Module"           defStyleNum="dsImport" spellChecking="false" />
 		<itemData name="Template"         defStyleNum="dsVerbatimString" />
 		<itemData name="Substitution"     defStyleNum="dsSpecialChar" spellChecking="false" />
+		<itemData name="Special Operators" defStyleNum="dsKeyword" spellChecking="false" />
 	</itemDatas>
 
 </highlighting>

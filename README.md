@@ -2,13 +2,14 @@
 
 **Author:** Nibaldo González (<nibgonz@gmail.com>)
 
-**Last Change:** November 2018
+**Last Change:** December 2018
 
 **Requirements:** KDE Frameworks 5.53.0 or higher
 
 ```
 This file is part of the KDE's KSyntaxHighlighting Framework.
 ```
+**Last version:** Version 2 included in KDE Frameworks 5.54.0+.
 
 ## Description:
 
@@ -34,3 +35,22 @@ However, these XML files can also be stored in:
 For more details of KSyntaxHighlighting Framework, visit:
 * Official Repository: https://phabricator.kde.org/source/syntax-highlighting/
 * Documentation: https://docs.kde.org/stable5/en/applications/katepart/highlight.html
+
+
+## Installation:
+
+If you do not have the latest version of KDE Frameworks, you can manually install the latest XML files. 
+
+Copy the `*.xml` files to `$HOME/.local/share/org.kde.syntax-highlighting/syntax/` (for local user) or `/usr/share/org.kde.syntax-highlighting/syntax/` (for all users).
+
+Ex.: 
+For local user:
+```bash
+mkdir -p $HOME/.local/share/org.kde.syntax-highlighting/syntax/
+cp ./{typescript,typescript-react,javascript-react}.xml $HOME/.local/share/org.kde.syntax-highlighting/syntax/
+```
+For all users:
+```bash
+sudo mkdir -p /usr/share/org.kde.syntax-highlighting/syntax/
+sudo cp ./{typescript,typescript-react,javascript-react}.xml /usr/share/org.kde.syntax-highlighting/syntax/
+```
