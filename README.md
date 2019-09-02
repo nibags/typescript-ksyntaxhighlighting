@@ -2,11 +2,11 @@
 
 **Author:** Nibaldo González (<nibgonz@gmail.com>)
 
-**Last Change:** July 2019
+**Last Change:** August 2019
 
 **Requirements:** KDE Frameworks 5.53.0 or higher
 
-**Last versions:** Included in KDE Frameworks 5.61.0+.
+**Last versions:** Included in KDE Frameworks 5.62.0+.
 
 ```
 This file is part of the KDE's KSyntaxHighlighting Framework.
@@ -71,6 +71,12 @@ sudo cp ./{typescript,typescript-react,javascript-react,javascript/javascript}.x
         <th>Relevant Changes</th>
     </tr>
     <tr>
+        <td>5</td>
+        <td>Aug. 30, 2019</td>
+        <td>5.62.0</td>
+        <td>Fix incorrect highlighting of the "?" operator, in the previous update.</td>
+    </tr>
+    <tr>
         <td>4</td>
         <td>Jul. 16, 2019</td>
         <td>5.61.0</td>
@@ -104,6 +110,13 @@ sudo cp ./{typescript,typescript-react,javascript-react,javascript/javascript}.x
         <th>Date</th>
         <th>KDE Frameworks</th>
         <th>Relevant Changes</th>
+    </tr>
+    <tr>
+        <td>-</td>
+        <td>5</td>
+        <td>Aug. 30, 2019</td>
+        <td>5.62.0</td>
+        <td>Adapt to the TypeScript highlighter.</td>
     </tr>
     <tr>
         <td>-</td>
