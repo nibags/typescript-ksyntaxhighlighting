@@ -2,11 +2,11 @@
 
 **Author:** Nibaldo González (<nibgonz@gmail.com>)
 
-**Last Change:** August 2019
+**Last Change:** October 2019
 
 **Requirements:** KDE Frameworks 5.53.0 or higher
 
-**Last versions:** Included in KDE Frameworks 5.62.0+.
+**Last versions:** Included in KDE Frameworks 5.64.0+.
 
 ```
 This file is part of the KDE's KSyntaxHighlighting Framework.
@@ -14,20 +14,20 @@ This file is part of the KDE's KSyntaxHighlighting Framework.
 
 ## Description:
 
-Add syntax highlighting to KDE text editors (as Kate, KWrite, KDevelop 
-or any application that uses the KSyntaxHighlighting or KTextEditor Framework) 
+Add syntax highlighting to KDE text editors (as Kate, KWrite, KDevelop
+or any application that uses the KSyntaxHighlighting or KTextEditor Framework)
 for **TypeScript**, **TypeScript React** & **JavaScript React**.
 
 These files are an extension of the JavaScript highlighter (`javascript.xml`, Version 11).
 
 The TypeScript and TypeScript React highlighters require **KDE Frameworks 5.53.0** to work.
 
-**NOTE:** `typescript-react.xml` depends on `typescript.xml`; 
+**NOTE:** `typescript-react.xml` depends on `typescript.xml`;
 `typescript.xml` and `javascript-react.xml` depend on the JavaScript highlighter.
 
 ## About XML Files of Syntax Highlighting Definition:
 
-The syntax highlighting definition files, of the KSyntaxHighlighting Framework, 
+The syntax highlighting definition files, of the KSyntaxHighlighting Framework,
 consist of XML files that are compiled in the KDE Frameworks libraries.
 
 However, these XML files can also be stored in:
@@ -41,15 +41,15 @@ For more details of KSyntaxHighlighting Framework, visit:
 
 ## Installation:
 
-If you do not have the latest version of KDE Frameworks, you can manually install the latest XML files. 
+If you do not have the latest version of KDE Frameworks, you can manually install the latest XML files.
 
-**IMPORTANT:** Also install the latest version of `javascript.xml`; 
-a copy of this file is included in this repository ("javascript" directory). 
+**IMPORTANT:** Also install the latest version of `javascript.xml`;
+a copy of this file is included in this repository ("javascript" directory).
 The file `typescript-react.xml` requires the latest version of `typescript.xml`.
 
 Copy the `*.xml` files to `$HOME/.local/share/org.kde.syntax-highlighting/syntax/` (for local user) or `/usr/share/org.kde.syntax-highlighting/syntax/` (for all users).
 
-Ex.: 
+Ex.:
 For local user:
 ```bash
 mkdir -p $HOME/.local/share/org.kde.syntax-highlighting/syntax/
@@ -69,6 +69,15 @@ sudo cp ./{typescript,typescript-react,javascript-react,javascript/javascript}.x
         <th>Date</th>
         <th>KDE Frameworks</th>
         <th>Relevant Changes</th>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td>Oct. 01, 2019</td>
+        <td>5.64.0</td>
+        <td><ul>
+            <li>Add "asserts" keyword in type predicates.</li>
+            <li>Highlight types after the "as" keyword.</li>
+        </ul></td>
     </tr>
     <tr>
         <td>5</td>
@@ -110,6 +119,13 @@ sudo cp ./{typescript,typescript-react,javascript-react,javascript/javascript}.x
         <th>Date</th>
         <th>KDE Frameworks</th>
         <th>Relevant Changes</th>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td>6</td>
+        <td>Aug. 30, 2019</td>
+        <td>5.62.0</td>
+        <td>TSX: Highlight "&lt;T extends" as a type assertion, not as a Tag.</td>
     </tr>
     <tr>
         <td>-</td>
