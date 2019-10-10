@@ -13,7 +13,7 @@
 
 	<!ENTITY identifier "(?:[a-zA-Z_$]|[^[:ascii:]])(?:[\w$]|[^[:ascii:]])*">
 	<!ENTITY objectOp   "[\?!]?">
-	<!ENTITY endLine    "\s*(?:$|//|(/\*.*\*/\s*)+(?:$|//))">
+	<!ENTITY endLine    "\s*(?:$|//|(?:/\*.*\*/\s*)+(?:$|//))">
 ]>
 
 <!--
