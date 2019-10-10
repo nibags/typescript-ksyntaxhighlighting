@@ -124,7 +124,7 @@ sudo cp ./{typescript,typescript-react,javascript-react,javascript/javascript}.x
         <td>6</td>
         <td>6</td>
         <td>Oct. 01, 2019</td>
-        <td>5.62.0</td>
+        <td>5.64.0</td>
         <td>TSX: Highlight "&lt;T extends" as a type assertion, not as a Tag.</td>
     </tr>
     <tr>
