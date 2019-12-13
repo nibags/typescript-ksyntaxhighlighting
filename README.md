@@ -2,11 +2,11 @@
 
 **Author:** Nibaldo González (<nibgonz@gmail.com>)
 
-**Last Change:** November 2019
+**Last Change:** December 2019
 
 **Requirements:** KDE Frameworks 5.53.0 or higher
 
-**Last versions:** Included in KDE Frameworks 5.65.0+.
+**Last versions:** Included in KDE Frameworks 5.66.0+.
 
 ```
 This file is part of the KDE's KSyntaxHighlighting Framework.
@@ -69,6 +69,12 @@ sudo cp ./{typescript,typescript-react,javascript-react,javascript}.xml /usr/sha
         <th>Date</th>
         <th>KDE Frameworks</th>
         <th>Relevant Changes</th>
+    </tr>
+    <tr>
+        <td>8</td>
+        <td>Dec. 12, 2019</td>
+        <td>5.66.0</td>
+        <td>Add "bigint" primitive type.</td>
     </tr>
     <tr>
         <td>7</td>
