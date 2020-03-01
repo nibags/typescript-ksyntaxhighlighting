@@ -2,11 +2,11 @@
 
 **Author:** Nibaldo González (<nibgonz@gmail.com>)
 
-**Last Change:** December 2019
+**Last Change:** February 2020
 
 **Requirements:** KDE Frameworks 5.53.0 or higher
 
-**Last versions:** Included in KDE Frameworks 5.66.0+.
+**Last versions:** Included in KDE Frameworks 5.68.0+.
 
 ```
 This file is part of the KDE's KSyntaxHighlighting Framework.
@@ -71,6 +71,16 @@ sudo cp ./{typescript,typescript-react,javascript-react,javascript}.xml /usr/sha
         <th>Relevant Changes</th>
     </tr>
     <tr>
+        <td>9</td>
+        <td>Feb. 23, 2020</td>
+        <td>5.68.0</td>
+        <td><ul>
+            <li>Add private-named instance fields.</li>
+            <li>Support type-only imports and exports.</li>
+            <li>Improve conditional expressions.</li>
+        </ul></td>
+    </tr>
+    <tr>
         <td>8</td>
         <td>Dec. 12, 2019</td>
         <td>5.66.0</td>
@@ -131,6 +141,13 @@ sudo cp ./{typescript,typescript-react,javascript-react,javascript}.xml /usr/sha
         <th>Date</th>
         <th>KDE Frameworks</th>
         <th>Relevant Changes</th>
+    </tr>
+    <tr>
+        <td>-</td>
+        <td>9</td>
+        <td>Feb. 23, 2020</td>
+        <td>5.68.0</td>
+        <td>Adapt to the TypeScript highlighter.</td>
     </tr>
     <tr>
         <td>8</td>
