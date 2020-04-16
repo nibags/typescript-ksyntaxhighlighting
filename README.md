@@ -2,11 +2,11 @@
 
 **Author:** Nibaldo González (<nibgonz@gmail.com>)
 
-**Last Change:** February 2020
+**Last Change:** April 2020
 
 **Requirements:** KDE Frameworks 5.53.0 or higher
 
-**Last versions:** Included in KDE Frameworks 5.68.0+.
+**Last versions:** Included in KDE Frameworks 5.70.0+.
 
 ```
 This file is part of the KDE's KSyntaxHighlighting Framework.
@@ -69,6 +69,12 @@ sudo cp ./{typescript,typescript-react,javascript-react,javascript}.xml /usr/sha
         <th>Date</th>
         <th>KDE Frameworks</th>
         <th>Relevant Changes</th>
+    </tr>
+    <tr>
+        <td>10</td>
+        <td>Apr. 13, 2020</td>
+        <td>5.70.0</td>
+        <td>Add the "awaited" type operator.</td>
     </tr>
     <tr>
         <td>9</td>
