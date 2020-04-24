@@ -20,10 +20,12 @@ for **TypeScript**, **TypeScript React (TSX)** & **JavaScript React (JSX)**.
 
 These files are an extension of the JavaScript highlighter (`javascript.xml`, Version 14).
 
-The TypeScript and TypeScript React highlighters require **KDE Frameworks 5.53.0** to work.
+**NOTES:**
 
-**NOTE:** `typescript-react.xml` depends on `typescript.xml`;
+* The TypeScript and TypeScript React highlighters require **KDE Frameworks 5.53.0** to work.
+* `typescript-react.xml` depends on `typescript.xml`,
 `typescript.xml` and `javascript-react.xml` depend on the JavaScript highlighter.
+
 
 ## About XML Files of Syntax Highlighting Definition:
 
@@ -76,16 +78,6 @@ For all users:
 ```bash
 sudo mkdir -p /usr/share/org.kde.syntax-highlighting/syntax/
 sudo cp ./{typescript,typescript-react,javascript-react,javascript}.xml /usr/share/org.kde.syntax-highlighting/syntax/
-```
-For Kate's Flatpak package:
-```bash
-mkdir -p $HOME/.var/app/org.kde.kate/data/org.kde.syntax-highlighting/syntax/
-cp ./{typescript,typescript-react,javascript-react,javascript}.xml $HOME/.var/app/org.kde.kate/data/org.kde.syntax-highlighting/syntax/
-```
-For Kate's Snap package:
-```bash
-mkdir -p $HOME/snap/kate/current/.local/share/org.kde.syntax-highlighting/syntax/
-cp ./{typescript,typescript-react,javascript-react,javascript}.xml $HOME/snap/kate/current/.local/share/org.kde.syntax-highlighting/syntax/
 ```
 
 ## List of Versions
