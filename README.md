@@ -20,7 +20,7 @@ for **TypeScript**, **TypeScript React (TSX)** & **JavaScript React (JSX)**.
 
 These files are an extension of the JavaScript highlighter (`javascript.xml`, Version 14).
 
-**NOTES:**
+**NOTE:**
 
 * The TypeScript and TypeScript React highlighters require **KDE Frameworks 5.53.0** to work.
 * `typescript-react.xml` depends on `typescript.xml`,
