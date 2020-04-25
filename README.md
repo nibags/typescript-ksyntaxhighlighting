@@ -51,6 +51,10 @@ However, these XML files can also be stored in:
         <td>For <a href="https://snapcraft.io/kate">Kate's Snap package</a></td>
         <td>$HOME/snap/kate/current/.local/share/org.kde.syntax-highlighting/syntax/</td>
     </tr>
+    <tr>
+        <td>On Windows</a></td>
+        <td>%USERPROFILE%\AppData\Local\org.kde.syntax-highlighting\syntax\ </td>
+    </tr>
 </table>
 
 For more details of KSyntaxHighlighting Framework, visit:
